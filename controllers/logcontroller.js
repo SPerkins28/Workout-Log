@@ -3,8 +3,9 @@ const router = express.Router();
 const { Log } = require("../models");
 
 
+
 /* CREATE */
-router.post('/create', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { description, definition, result } = req.body;
         
@@ -21,7 +22,7 @@ router.post('/create', async (req, res) => {
 });
 
 /* GET ALL LOGS FOR USER*/
-router.get("/mine", (req, res) => {
+router.get("/", (req, res) => {
     let userid = req.user.id
     Log.findAll({
         where: { owner: userid }
@@ -34,7 +35,48 @@ router.get("/mine", (req, res) => {
     );
 });
 
-/* GET LOGS BY ID */
-// router.put("/:id")
+/* GET USER LOGS BY LOG ID FOR LOGGED IN USER */
+router.get("/:id", (req, res) => {
+    const userid = req.user.id
+    const logId = req.params.id
+
+    Log.findOne({ where: { owner: userid, id: logId }
+    })
+        .then((log) => res.status(200).json({
+            specificLog: log
+        }))
+        .catch((err) => res.status(500).json({ 
+            error: err,
+            message: "These Aint Yours!"
+        }));
+   
+});
+
+/* UPDATE LOGS BY USER ID */
+router.put("/:id", (req, res) => {
+   const query = {where: {id: req.params.id, owner: req.user.id}};
+
+    Log.update(req.body, query)
+        .then((logUpdated) => {
+            Log.findOne(query)
+                .then((locatedUpdatedLog) => {
+                    res.status(200).json({
+                        log: locatedUpdatedLog,
+                        logChanged: logUpdated,
+                    });
+                });
+        })
+        .catch((err) => res.json(err));
+});
+
+/* DELETE */
+router.delete("/:id", (req, res) => {
+    const query = {where: {id: req.params.id, owner: req.user.id}};
+    Log.destroy(query)
+        .then((log) => res.status(200).json({
+            log: log,
+        }))
+        .catch((err) => res.json({error: err}));
+});
 
 module.exports = router;

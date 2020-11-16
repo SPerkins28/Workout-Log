@@ -3,7 +3,7 @@ const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-router.post('/create', function (req, res) {
+router.post('/', function (req, res) {
     User.create({
         firstName: req.body.user.firstName,
         lastName: req.body.user.lastName,
