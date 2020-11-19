@@ -5,8 +5,6 @@ const bcrypt = require('bcryptjs');
 
 router.post('/', function (req, res) {
     User.create({
-        firstName: req.body.user.firstName,
-        lastName: req.body.user.lastName,
         username: req.body.user.username,
         password: bcrypt.hashSync(req.body.user.password, 13)
     })
@@ -49,7 +47,7 @@ router.post('/login', function(req, res) {
                 }
             });
         } else {
-            res.status(500).json({error: 'User does not'})
+            res.status(500).json({error: 'User does not exist'})
         }
     })
     .catch(err => res.status(500).json({error: err}))
