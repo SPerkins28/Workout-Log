@@ -6,8 +6,9 @@ const { Log } = require("../models");
 
 /* CREATE */
 router.post('/', async (req, res) => {
+    console.log(req.body);
     try {
-        const { description, definition, result } = req.body;
+        const { description, definition, result } = req.body.log;
         
         let newLog = await Log.create({description, definition, result, owner: req.user.id});
         res.status(200).json({
@@ -15,6 +16,7 @@ router.post('/', async (req, res) => {
             message: 'Workout Logged!'
         });
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             message: 'Workout Log Failed.'
         });
@@ -52,11 +54,11 @@ router.get("/:id", (req, res) => {
    
 });
 
-/* UPDATE LOGS BY USER ID */
+/* UPDATE LOGS BY LOG ID */
 router.put("/:id", (req, res) => {
    const query = {where: {id: req.params.id, owner: req.user.id}};
-
-    Log.update(req.body, query)
+   
+    Log.update(req.body.log, query)
         .then((logUpdated) => {
             Log.findOne(query)
                 .then((locatedUpdatedLog) => {
