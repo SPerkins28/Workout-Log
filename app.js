@@ -13,6 +13,8 @@ app.use(express.json());
 
 app.use("/user", controllers.usercontroller);
 
+app.use("/userinfo", controllers.userinfocontroller);
+
 app.use("/log", validateSession, controllers.logcontroller);
 
 db.authenticate()
